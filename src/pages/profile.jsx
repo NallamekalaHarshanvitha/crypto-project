@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { useState } from "react";
 
 const initialForm = {
@@ -15,6 +16,7 @@ const stepTitles = [
 ];
 
 export default function Profile() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState(initialForm);
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState({});
@@ -65,6 +67,8 @@ export default function Profile() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validateStep()) return;
+
+    localStorage.setItem("cryptoProfile", JSON.stringify(formData));
     setSubmitted(true);
   };
 
@@ -188,7 +192,16 @@ export default function Profile() {
   return (
     <div className="profile-page">
       <div className="profile-card">
-        <h2 className="profile-title">Profile Registration</h2>
+        <div className="profile-header-row">
+          <h2 className="profile-title">Profile Registration</h2>
+          <button
+            type="button"
+            className="home-button"
+            onClick={() => navigate("/")}
+          >
+            Home
+          </button>
+        </div>
 
         <div className="stepper">
           {stepTitles.map((title, index) => (
@@ -223,7 +236,7 @@ export default function Profile() {
                 >
                   Next
                 </button>
-              ) : (
+              ) :(
                 <button type="submit" className="action-button primary">
                   Submit
                 </button>
