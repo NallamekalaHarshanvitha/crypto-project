@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchCryptos } from "../api/coinGecko";
 import { CryptoCard } from "../components/CryptoCard";
 export const Home = () => {
@@ -60,14 +61,24 @@ export const Home = () => {
             <h1>🚀 Crypto Tracker</h1>
             <p>Real-time cryptocurrency prices and market data</p>
           </div>
-          <div className="search-section">
-            <input
-              type="text"
-              placeholder="Search cryptos..."
-              className="search-input"
-              onChange={(e) => setSearchQuery(e.target.value)}
-              value={searchQuery}
-            />
+          <div className="header-actions">
+            <div className="search-section">
+              <input
+                type="text"
+                placeholder="Search cryptos..."
+                className="search-input"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
+              />
+            </div>
+            <Link
+              to="/profile"
+              className="profile-button"
+              aria-label="Open profile"
+              title="Open profile"
+            >
+              <span aria-hidden="true">👤</span>
+            </Link>
           </div>
         </div>
       </header>
@@ -111,10 +122,6 @@ export const Home = () => {
           ))}
         </div>
       )}
-
-      <footer className="footer">
-        <p>Data provided by CoinGecko API • Updated every 30 seconds</p>
-      </footer>
     </div>
   );
 };
