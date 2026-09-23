@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { fetchCryptos } from "../api/coinGecko";
 import { CryptoCard } from "../components/CryptoCard";
+
 export const Home = () => {
+  const navigate = useNavigate();
   const [cryptoList, setCryptoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("grid");
@@ -21,13 +23,20 @@ export const Home = () => {
   }, []);
 
   useEffect(() => {
+    
     const interval = setInterval(fetchCryptoData, 3000);
 
     return () => clearInterval(interval);
   }, [fetchCryptoData]);
 
   const filteredList = useMemo(() => {
-    let filtered = cryptoList.filter(
+    const coins = Array.isArray(cryptoList)
+      ? cryptoList
+      : Array.isArray(cryptoList?.data)
+        ? cryptoList.data
+        : [];
+
+    let filtered = coins.filter(
       (crypto) =>
         crypto.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         crypto.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -61,6 +70,7 @@ export const Home = () => {
             <h1>🚀 Crypto Tracker</h1>
             <p>Real-time cryptocurrency prices and market data</p>
           </div>
+
           <div className="header-actions">
             <div className="search-section">
               <input
@@ -71,14 +81,16 @@ export const Home = () => {
                 value={searchQuery}
               />
             </div>
-            <Link
-              to="/profile"
+
+            <button
+              type="button"
               className="profile-button"
-              aria-label="Open profile"
-              title="Open profile"
+              onClick={() => navigate("/profile")}
+              aria-label="Open profile form"
+              title="Profile"
             >
-              <span aria-hidden="true">👤</span>
-            </Link>
+              👤
+            </button>
           </div>
         </div>
       </header>
