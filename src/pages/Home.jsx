@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import { fetchCryptos } from "../api/coinGecko";
 import { CryptoCard } from "../components/CryptoCard";
+
 export const Home = () => {
+  const navigate = useNavigate();
   const [cryptoList, setCryptoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("grid");
@@ -26,7 +29,13 @@ export const Home = () => {
   }, [fetchCryptoData]);
 
   const filteredList = useMemo(() => {
-    let filtered = cryptoList.filter(
+    const coins = Array.isArray(cryptoList)
+      ? cryptoList
+      : Array.isArray(cryptoList?.data)
+        ? cryptoList.data
+        : [];
+
+    let filtered = coins.filter(
       (crypto) =>
         crypto.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         crypto.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -60,14 +69,27 @@ export const Home = () => {
             <h1>🚀 Crypto Tracker</h1>
             <p>Real-time cryptocurrency prices and market data</p>
           </div>
-          <div className="search-section">
-            <input
-              type="text"
-              placeholder="Search cryptos..."
-              className="search-input"
-              onChange={(e) => setSearchQuery(e.target.value)}
-              value={searchQuery}
-            />
+
+          <div className="header-actions">
+            <div className="search-section">
+              <input
+                type="text"
+                placeholder="Search cryptos..."
+                className="search-input"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="profile-button"
+              onClick={() => navigate("/profile")}
+              aria-label="Open profile form"
+              title="Profile"
+            >
+              👤
+            </button>
           </div>
         </div>
       </header>
