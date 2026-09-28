@@ -1,66 +1,38 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router";
-import { fetchCryptos } from "../api/coinGecko";
+import { useEffect } from "react";
+import { Link } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import { CryptoCard } from "../components/CryptoCard";
+import {
+  fetchCryptoList,
+  setViewMode,
+  setSortBy,
+  setSearchQuery,
+  selectFilteredSortedList,
+  selectStatus,
+  selectViewMode,
+  selectSortBy,
+  selectSearchQuery,
+} from "../features/crypto/cryptoSlice";
 
 export const Home = () => {
-  const navigate = useNavigate();
-  const [cryptoList, setCryptoList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState("grid");
-  const [sortBy, setSortBy] = useState("market_cap_rank");
-  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch();
 
-  const fetchCryptoData = useCallback(async () => {
-    try {
-      const data = await fetchCryptos();
-      setCryptoList(data);
-    } catch (err) {
-      console.error("Error fetching crypto: ", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const filteredList = useSelector(selectFilteredSortedList);
+  const status = useSelector(selectStatus);
+  const viewMode = useSelector(selectViewMode);
+  const sortBy = useSelector(selectSortBy);
+  const searchQuery = useSelector(selectSearchQuery);
+
+  // Only show the spinner on the very first load, same as the original
+  // (which never reset isLoading back to true on the 3s poll).
+  const isLoading =
+    (status === "idle" || status === "loading") && filteredList.length === 0;
 
   useEffect(() => {
-    
-    const interval = setInterval(fetchCryptoData, 3000);
-
+    dispatch(fetchCryptoList());
+    const interval = setInterval(() => dispatch(fetchCryptoList()), 3000);
     return () => clearInterval(interval);
-  }, [fetchCryptoData]);
-
-  const filteredList = useMemo(() => {
-    const coins = Array.isArray(cryptoList)
-      ? cryptoList
-      : Array.isArray(cryptoList?.data)
-        ? cryptoList.data
-        : [];
-
-    let filtered = coins.filter(
-      (crypto) =>
-        crypto.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        crypto.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "name":
-          return a.name.localeCompare(b.name);
-        case "price":
-          return a.current_price - b.current_price;
-        case "price_desc":
-          return b.current_price - a.current_price;
-        case "change":
-          return a.price_change_percentage_24h - b.price_change_percentage_24h;
-        case "market_cap":
-          return a.market_cap - b.market_cap;
-        default:
-          return a.market_cap_rank - b.market_cap_rank;
-      }
-    });
-
-    return filtered;
-  }, [cryptoList, searchQuery, sortBy]);
+  }, [dispatch]);
 
   return (
     <div className="app">
@@ -70,34 +42,27 @@ export const Home = () => {
             <h1>🚀 Crypto Tracker</h1>
             <p>Real-time cryptocurrency prices and market data</p>
           </div>
-
-          <div className="header-actions">
-            <div className="search-section">
-              <input
-                type="text"
-                placeholder="Search cryptos..."
-                className="search-input"
-                onChange={(e) => setSearchQuery(e.target.value)}
-                value={searchQuery}
-              />
-            </div>
-
-            <button
-              type="button"
-              className="profile-button"
-              onClick={() => navigate("/profile")}
-              aria-label="Open profile form"
-              title="Profile"
-            >
+          <div className="search-section">
+            <input
+              type="text"
+              placeholder="Search cryptos..."
+              className="search-input"
+              onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+              value={searchQuery}
+            />
+            <Link to="/profile" className="profile-button" aria-label="Open profile page">
               👤
-            </button>
+            </Link>
           </div>
         </div>
       </header>
       <div className="controls">
         <div className="filter-group">
           <label>Sort by:</label>
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <select
+            value={sortBy}
+            onChange={(e) => dispatch(setSortBy(e.target.value))}
+          >
             <option value="market_cap_rank">Rank</option>
             <option value="name">Name</option>
             <option value="price">Price (Low to High)</option>
@@ -109,13 +74,13 @@ export const Home = () => {
         <div className="view-toggle">
           <button
             className={viewMode === "grid" ? "active" : ""}
-            onClick={() => setViewMode("grid")}
+            onClick={() => dispatch(setViewMode("grid"))}
           >
             Grid
           </button>
           <button
             className={viewMode === "list" ? "active" : ""}
-            onClick={() => setViewMode("list")}
+            onClick={() => dispatch(setViewMode("list"))}
           >
             List
           </button>
@@ -129,8 +94,8 @@ export const Home = () => {
         </div>
       ) : (
         <div className={`crypto-container ${viewMode}`}>
-          {filteredList.map((crypto, key) => (
-            <CryptoCard crypto={crypto} key={key} />
+          {filteredList.map((crypto) => (
+            <CryptoCard crypto={crypto} key={crypto.id} />
           ))}
         </div>
       )}

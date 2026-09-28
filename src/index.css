@@ -77,9 +77,13 @@ body {
   flex: 1;
   min-width: min(100%, 260px);
   max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .search-input {
+  flex: 1;
   width: 100%;
   padding: 1rem 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);

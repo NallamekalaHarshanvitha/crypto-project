@@ -1,7 +1,15 @@
 import { useNavigate, useParams } from "react-router";
-import { fetchChartData, fetchCoinData } from "../api/coinGecko";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { formatMarketCap, formatPrice } from "../utils/formatter";
+import {
+  fetchCoinDetail,
+  fetchCoinChart,
+  clearCoinDetail,
+  selectCoin,
+  selectChartData,
+  selectCoinStatus,
+} from "../features/coinDetail/coinDetailSlice";
 import {
   CartesianGrid,
   LineChart,
@@ -15,45 +23,19 @@ import {
 export const CoinDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [coin, setCoin] = useState(null);
-  const [chartData, setChartData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+
+  const coin = useSelector(selectCoin);
+  const chartData = useSelector(selectChartData);
+  const status = useSelector(selectCoinStatus);
+  const isLoading = status === "idle" || status === "loading";
 
   useEffect(() => {
-    let cancelled = false;
-
-    const loadData = async () => {
-      try {
-        const [coinData, chartDataResponse] = await Promise.all([
-          fetchCoinData(id),
-          fetchChartData(id),
-        ]);
-
-        if (cancelled) return;
-
-        const formattedData = chartDataResponse.prices.map((price) => ({
-          time: new Date(price[0]).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          }),
-          price: price[1].toFixed(2),
-        }));
-
-        setCoin(coinData);
-        setChartData(formattedData);
-      } catch (err) {
-        if (!cancelled) console.error("Error fetching crypto: ", err);
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    };
-
-    loadData();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+    dispatch(fetchCoinDetail(id));
+    dispatch(fetchCoinChart(id));
+    // Reset so navigating between coins doesn't flash the previous coin's data
+    return () => dispatch(clearCoinDetail());
+  }, [dispatch, id]);
 
   if (isLoading) {
     return (
