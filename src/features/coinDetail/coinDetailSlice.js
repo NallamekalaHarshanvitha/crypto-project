@@ -4,7 +4,6 @@ import {
   fetchChartData as fetchChartDataApi,
 } from "../../api/coinGecko";
 
-// Replaces loadCoinData() in CoinDetail.jsx
 export const fetchCoinDetail = createAsyncThunk(
   "coinDetail/fetchCoinDetail",
   async (id, { rejectWithValue }) => {
@@ -16,8 +15,6 @@ export const fetchCoinDetail = createAsyncThunk(
   }
 );
 
-// Replaces loadChartData() in CoinDetail.jsx — the date/price formatting
-// that used to happen after setChartData now happens here, once, in the thunk.
 export const fetchCoinChart = createAsyncThunk(
   "coinDetail/fetchCoinChart",
   async (id, { rejectWithValue }) => {
@@ -39,7 +36,7 @@ export const fetchCoinChart = createAsyncThunk(
 const initialState = {
   coin: null,
   chartData: [],
-  status: "idle", // tracks the main coin fetch (drives the loading screen)
+  status: "idle", 
   error: null,
 };
 
@@ -47,8 +44,6 @@ const coinDetailSlice = createSlice({
   name: "coinDetail",
   initialState,
   reducers: {
-    // Dispatched on unmount / id change so switching coins doesn't
-    // briefly show the previous coin's data.
     clearCoinDetail(state) {
       state.coin = null;
       state.chartData = [];
@@ -79,8 +74,6 @@ const coinDetailSlice = createSlice({
 });
 
 export const { clearCoinDetail } = coinDetailSlice.actions;
-
-// --- Selectors ---
 export const selectCoin = (state) => state.coinDetail.coin;
 export const selectChartData = (state) => state.coinDetail.chartData;
 export const selectCoinStatus = (state) => state.coinDetail.status;

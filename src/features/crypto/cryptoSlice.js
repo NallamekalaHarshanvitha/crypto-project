@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import { fetchCryptos } from "../../api/coinGecko";
 
-// Thunk replaces the old fetchCryptoData() function in Home.jsx
+
 export const fetchCryptoList = createAsyncThunk(
   "crypto/fetchCryptoList",
   async (_, { rejectWithValue }) => {
@@ -15,9 +15,8 @@ export const fetchCryptoList = createAsyncThunk(
 
 const initialState = {
   list: [],
-  status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: "idle", 
   error: null,
-  // UI controls that used to be separate useState hooks in Home.jsx
   viewMode: "grid",
   sortBy: "market_cap_rank",
   searchQuery: "",
@@ -55,7 +54,6 @@ const cryptoSlice = createSlice({
 
 export const { setViewMode, setSortBy, setSearchQuery } = cryptoSlice.actions;
 
-// --- Selectors ---
 export const selectCryptoList = (state) => state.crypto.list;
 export const selectStatus = (state) => state.crypto.status;
 export const selectError = (state) => state.crypto.error;
@@ -63,9 +61,7 @@ export const selectViewMode = (state) => state.crypto.viewMode;
 export const selectSortBy = (state) => state.crypto.sortBy;
 export const selectSearchQuery = (state) => state.crypto.searchQuery;
 
-// Replaces the old filterAndSort() + filteredList state in Home.jsx.
-// Derived data lives in a memoized selector instead of its own state slice,
-// so it can never drift out of sync with list/sortBy/searchQuery.
+
 export const selectFilteredSortedList = createSelector(
   [selectCryptoList, selectSearchQuery, selectSortBy],
   (list, searchQuery, sortBy) => {
