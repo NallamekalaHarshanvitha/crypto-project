@@ -23,8 +23,6 @@ export const Home = () => {
   const sortBy = useSelector(selectSortBy);
   const searchQuery = useSelector(selectSearchQuery);
 
-  // Only show the spinner on the very first load, same as the original
-  // (which never reset isLoading back to true on the 3s poll).
   const isLoading =
     (status === "idle" || status === "loading") && filteredList.length === 0;
 
