@@ -1,22 +1,6 @@
-import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
-import { fetchCryptos } from "../../api/coinGecko";
-
-
-export const fetchCryptoList = createAsyncThunk(
-  "crypto/fetchCryptoList",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await fetchCryptos();
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
+import { createSlice, createSelector } from "@reduxjs/toolkit";
 
 const initialState = {
-  list: [],
-  status: "idle", 
-  error: null,
   viewMode: "grid",
   sortBy: "market_cap_rank",
   searchQuery: "",
@@ -36,34 +20,20 @@ const cryptoSlice = createSlice({
       state.searchQuery = action.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchCryptoList.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchCryptoList.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.list = action.payload;
-      })
-      .addCase(fetchCryptoList.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload ?? "Failed to fetch cryptos";
-      });
-  },
 });
 
 export const { setViewMode, setSortBy, setSearchQuery } = cryptoSlice.actions;
 
-export const selectCryptoList = (state) => state.crypto.list;
-export const selectStatus = (state) => state.crypto.status;
-export const selectError = (state) => state.crypto.error;
 export const selectViewMode = (state) => state.crypto.viewMode;
 export const selectSortBy = (state) => state.crypto.sortBy;
 export const selectSearchQuery = (state) => state.crypto.searchQuery;
 
-
 export const selectFilteredSortedList = createSelector(
-  [selectCryptoList, selectSearchQuery, selectSortBy],
+  [
+    (_state, list = []) => list,
+    selectSearchQuery,
+    selectSortBy,
+  ],
   (list, searchQuery, sortBy) => {
     const filtered = list.filter(
       (crypto) =>

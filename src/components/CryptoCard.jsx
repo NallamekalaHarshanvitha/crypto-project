@@ -1,10 +1,10 @@
 import { Link } from "react-router";
 import { formatPrice, formatMarketCap } from "../utils/formatter";
 
-export const CryptoCard = ({ crypto }) => {
+export const CryptoCard = ({ crypto, onEdit, onDelete, isDeleting }) => {
   return (
-    <Link to={`/coin/${crypto.id}`} style={{ textDecoration: "none" }}>
-      <div className="crypto-card">
+    <article className="crypto-card">
+      <Link to={`/coin/${crypto.id}`} className="crypto-card-link">
         <div className="crypto-header">
           <div className="crypto-info">
             <img src={crypto.image} alt={crypto.name} />
@@ -43,7 +43,19 @@ export const CryptoCard = ({ crypto }) => {
             </span>
           </div>
         </div>
+      </Link>
+      <div className="crypto-card-actions">
+        <button type="button" onClick={() => onEdit(crypto)}>
+          Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(crypto)}
+          disabled={isDeleting}
+        >
+          Delete
+        </button>
       </div>
-    </Link>
+    </article>
   );
 };

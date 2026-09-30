@@ -1,15 +1,6 @@
 import { useNavigate, useParams } from "react-router";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { formatMarketCap, formatPrice } from "../utils/formatter";
-import {
-  fetchCoinDetail,
-  fetchCoinChart,
-  clearCoinDetail,
-  selectCoin,
-  selectChartData,
-  selectCoinStatus,
-} from "../features/coinDetail/coinDetailSlice";
+import { useGetCoinChartQuery, useGetCoinDataQuery } from "../api/cryptoApi";
 import {
   CartesianGrid,
   LineChart,
@@ -23,19 +14,12 @@ import {
 export const CoinDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const coin = useSelector(selectCoin);
-  const chartData = useSelector(selectChartData);
-  const status = useSelector(selectCoinStatus);
-  const isLoading = status === "idle" || status === "loading";
-
-  useEffect(() => {
-    dispatch(fetchCoinDetail(id));
-    dispatch(fetchCoinChart(id));
-    // Reset so navigating between coins doesn't flash the previous coin's data
-    return () => dispatch(clearCoinDetail());
-  }, [dispatch, id]);
+  const {
+    data: coin,
+    isLoading,
+    error,
+  } = useGetCoinDataQuery(id);
+  const { data: chartData = [] } = useGetCoinChartQuery(id);
 
   if (isLoading) {
     return (
@@ -52,7 +36,7 @@ export const CoinDetail = () => {
     return (
       <div className="app">
         <div className="no-results">
-          <p>Coin not found</p>
+          <p>{error ? "Unable to load coin data." : "Coin not found"}</p>
           <button onClick={() => navigate("/")}>Go Back</button>
         </div>
       </div>

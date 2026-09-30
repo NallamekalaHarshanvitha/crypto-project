@@ -205,8 +205,7 @@
       "last_updated": "2026-09-22T06:58:10.000Z"
     },
     {
-      "id": "zcash",
-      "symbol": "zec",
+      "symbol": "zeca",
       "name": "Zcash",
       "image": "https://coin-images.coingecko.com/coins/images/486/large/Brandmark-Yellow_%281%29.png?1785810558",
       "current_price": 1491.35,
@@ -230,7 +229,8 @@
       "atl_change_percentage": 9174.4675,
       "atl_date": "2024-07-04T20:22:29.000Z",
       "roi": null,
-      "last_updated": "2026-09-22T06:58:10.000Z"
+      "last_updated": "2026-09-22T06:58:10.000Z",
+      "id": "zcash"
     },
     {
       "id": "figure-heloc",
@@ -369,34 +369,6 @@
       "atl": 3.06,
       "atl_change_percentage": 2703.57934,
       "atl_date": "2023-02-13T11:01:21.000Z",
-      "roi": null,
-      "last_updated": "2026-09-22T06:58:10.000Z"
-    },
-    {
-      "id": "rain",
-      "symbol": "rain",
-      "name": "Rain",
-      "image": "https://coin-images.coingecko.com/coins/images/69134/large/Rain_logo_1_.png?1762952191",
-      "current_price": 0.0136719,
-      "market_cap": 9700107548,
-      "market_cap_rank": 15,
-      "fully_diluted_valuation": 15624464311,
-      "total_volume": 26163060,
-      "high_24h": 0.01421037,
-      "low_24h": 0.01361905,
-      "price_change_24h": -0.000343329718738617,
-      "price_change_percentage_24h": -2.44969,
-      "market_cap_change_24h": -240045176.09796715,
-      "market_cap_change_percentage_24h": -2.4149,
-      "circulating_supply": 709239392523.7532,
-      "total_supply": 1142408526965.963,
-      "max_supply": 1150000000000,
-      "ath": 0.01946402,
-      "ath_change_percentage": -29.7581,
-      "ath_date": "2026-08-25T19:53:00.000Z",
-      "atl": 0.00222126,
-      "atl_change_percentage": 515.50235,
-      "atl_date": "2025-09-14T00:56:57.000Z",
       "roi": null,
       "last_updated": "2026-09-22T06:58:10.000Z"
     },
